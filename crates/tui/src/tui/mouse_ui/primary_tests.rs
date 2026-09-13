@@ -163,3 +163,49 @@ fn middle_click_respects_overlays_missing_composer_and_remote_clipboard() {
         assert_eq!(app.status_message, status, "{mode}");
     }
 }
+
+#[test]
+fn transcript_drag_released_over_composer_keeps_caret_and_clears_drag() {
+    let (mut app, text) = composer();
+    app.input = "draft".into();
+    app.cursor_position = 5;
+    app.history = vec![HistoryCell::User {
+        content: "SELECTED_LINE".into(),
+    }];
+    app.resync_history_revisions();
+    app.viewport.transcript_cache.ensure(
+        &app.history,
+        &app.history_revisions,
+        80,
+        app.transcript_render_options(),
+    );
+    app.viewport.transcript_selection.anchor = Some(TranscriptSelectionPoint {
+        line_index: 0,
+        column: 0,
+    });
+    app.viewport.transcript_selection.head = Some(TranscriptSelectionPoint {
+        line_index: 0,
+        column: 80,
+    });
+    app.viewport.transcript_selection.dragging = true;
+    let expected = selection_to_text(&app).unwrap();
+    // Dragging across the composer must not move its caret or start a
+    // composer selection.
+    handle_mouse_event(
+        &mut app,
+        event(MouseEventKind::Drag(MouseButton::Left), text.x + 2, text.y),
+    );
+    assert_eq!(app.cursor_position, 5);
+    assert!(app.selection_anchor.is_none());
+    assert!(app.viewport.transcript_selection.dragging);
+    // Releasing over the composer finishes the transcript drag.
+    handle_mouse_event(
+        &mut app,
+        event(MouseEventKind::Up(MouseButton::Left), text.x + 2, text.y),
+    );
+    assert!(!app.viewport.transcript_selection.dragging);
+    assert_eq!(app.cursor_position, 5);
+    assert_eq!(app.input, "draft");
+    assert_eq!(app.clipboard.read_primary_text(), Some(expected));
+    assert_eq!(app.clipboard.last_written_text(), Some("REGULAR_CLIPBOARD"));
+}

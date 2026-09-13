@@ -2661,6 +2661,16 @@ has no scheduled next run. **Cancel** (`Esc`) discards the draft. Editing keeps
 existing permission settings, custom schedules, and additional workspace
 entries unless the corresponding supported field is explicitly changed.
 
+Schedules are evaluated in the machine's local time zone against the wall
+clock. A wall time that does not exist on a spring-forward day is skipped and
+an ambiguous fall-back time fires once. Occurrences missed while Codewhale was
+closed, asleep, or still running the previous occurrence are coalesced: the
+next start runs one catch-up occurrence and then continues from the next
+future slot, never replaying every missed slot. An occurrence never starts
+while an earlier run of the same automation is still queued or running. Each
+run is recorded durably with its status, timing and error; a run that needs a
+tool approval has no operator to ask and fails once the approval wait expires.
+
 Choosing a concrete model pins both the model and its exact configured
 provider, including named custom routes. Later changes to the active provider
 do not move that automation's pin. The default-model choice and legacy

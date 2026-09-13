@@ -409,6 +409,17 @@ pub(crate) fn handle_composer_mouse(app: &mut App, mouse: MouseEvent) -> bool {
     if !app.view_stack.is_empty() {
         return false;
     }
+    // A transcript selection or scrollbar drag that ends over the composer
+    // belongs to the surface that started it: the transcript handler must
+    // still see the release to clear its drag state and publish the text.
+    if matches!(
+        mouse.kind,
+        MouseEventKind::Drag(MouseButton::Left) | MouseEventKind::Up(MouseButton::Left)
+    ) && (app.viewport.transcript_selection.dragging
+        || app.viewport.transcript_scrollbar_dragging)
+    {
+        return false;
+    }
     // Use outer area for hit-testing (includes border).
     let Some(area) = app.viewport.last_composer_area else {
         return false;
