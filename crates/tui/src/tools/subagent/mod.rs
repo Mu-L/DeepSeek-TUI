@@ -8901,6 +8901,8 @@ impl ToolSpec for AgentTool {
                     "profile_count": profiles.len(),
                     "profile_total_count": roster.members().iter().filter(|member| member.origin != crate::fleet::roster::ProfileOrigin::BuiltIn).count(),
                     "profile_load_error": roster.load_error(),
+                    "profile_load_issues": roster.profile_load_issues().iter().take(64).collect::<Vec<_>>(),
+                    "profile_load_issue_count": roster.profile_load_issues().len(),
                     "selector_help": "Use type:<role> for its posture and configured role pin, or profile:<member_id> for a saved member with its instructions and exact route. Explicit profiles precede manual role pins, then unique saved role pins. model/model_strength choose only unpinned routes; thinking may override the saved tier.",
                 });
                 let mut result = ToolResult::json(&payload)
@@ -13286,7 +13288,8 @@ fn resolve_spawn_profile(
     let Some(selector) = request.profile.as_deref() else {
         return Ok(None);
     };
-    let member = crate::fleet::identity::resolve_member_in_profiles(roster.members(), selector)
+    let member = roster
+        .resolve_member(selector)
         .map_err(|error| ToolError::invalid_input(error.to_string()))?;
     let Some(member) = member else {
         if !roster.is_exact_selection() && FleetRole::from_str(selector).is_some() {

@@ -373,6 +373,13 @@ impl FleetManager {
         if let Some(error) = roster.load_error() {
             bail!("cannot create Fleet run: {error}");
         }
+        for task in &doc.tasks {
+            if let Some(worker) = &task.worker
+                && let Some(selector) = worker.agent_profile.as_deref().or(worker.role.as_deref())
+            {
+                roster.resolve_member(selector)?;
+            }
+        }
         worker_runtime::freeze_fleet_task_members(
             &mut doc.tasks,
             roster.members(),
@@ -3693,6 +3700,45 @@ mod tests {
                 .contains("references unknown agent profile selector \"missing\"")
         );
         assert!(manager.ledger.rebuild_state().unwrap().runs.is_empty());
+    }
+
+    #[test]
+    fn issue_6117_fleet_rejects_invalid_personal_override_before_journal_creation() {
+        let _env = crate::test_support::lock_test_env();
+        let tmp = TempDir::new().unwrap();
+        let home = tmp.path().join("state");
+        let _home = crate::test_support::EnvVarGuard::set("CODEWHALE_HOME", &home);
+        std::fs::create_dir_all(home.join("agents")).unwrap();
+        std::fs::write(
+            home.join("agents/scout.toml"),
+            "allow_shell = true\ntrust = true\n",
+        )
+        .unwrap();
+        let manager = test_manager(tmp.path()).unwrap();
+        for (profile, role) in [(Some("scout"), None), (None, Some("explore"))] {
+            let mut task = task("task-a");
+            task.worker = Some(FleetTaskWorkerProfile {
+                agent_profile: profile.map(str::to_string),
+                role: role.map(str::to_string),
+                loadout: None,
+                model_class: None,
+                model: None,
+                tool_profile: None,
+                tools: Vec::new(),
+                capabilities: Vec::new(),
+            });
+            let doc = FleetTaskSpecDocument {
+                name: None,
+                labels: BTreeMap::new(),
+                security_policy: None,
+                workers: Vec::new(),
+                tasks: vec![task],
+                usage_ceiling: None,
+            };
+            let error = manager.create_queued_run(doc, 1).unwrap_err().to_string();
+            assert!(error.contains("scout.toml"), "{error}");
+            assert!(manager.ledger.rebuild_state().unwrap().runs.is_empty());
+        }
     }
 
     #[test]

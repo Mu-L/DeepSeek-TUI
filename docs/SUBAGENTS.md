@@ -758,3 +758,39 @@ removed in v0.9.4 (remember.rs:165); see `docs/MEMORY.md` for the full layout.
 - `SharedSubAgentManager` is `Arc<RwLock<...>>` — read paths use
   read locks so `/agents` and the workbar projection don't block
   the main loop during multi-agent fan-out (#510).
+
+Personal profiles use the same format at
+`$CODEWHALE_HOME/agents/<id>.toml` (normally `~/.codewhale/agents/`). For example:
+
+```toml
+# ~/.codewhale/agents/reasoner.toml
+base_role = "explore"
+provider = "openrouter"
+model = "qwen/qwen3.7-plus"
+reasoning_effort = "high"
+
+[permissions]
+allow_shell = false
+trust = false
+```
+
+Select it with `agent(action: "start", profile: "reasoner", prompt: "...")`.
+The provider must also be configured in `config.toml`. The receipt names the
+resolved profile, its personal/project origin, provider/model and effective
+reasoning effort. Effort is normalized to the selected model's supported tiers;
+an explicit `thinking` request overrides the saved preference.
+
+`allow_shell` and `trust` belong under `[permissions]`, not at the top level.
+A profile cannot grant `allow_shell = true`, `trust = true`, or disable approval.
+Use the appropriate `base_role` for the task; the parent session's live policy
+remains the authority ceiling. These profile fields are not a way to grant
+additional access.
+
+A malformed, unreadable or duplicate profile now causes an explicit selection
+error, including when its name matches a built-in role. It never silently
+substitutes a lower roster layer. Repair the file and retry; profiles are reloaded
+for each launch. `agent(action: "roster")` reports affected profile identities and
+paths in `profile_load_issues` without exposing parser excerpts. Other valid
+profiles remain available, and a valid project override still wins over a broken
+personal definition. Fleet run creation performs the same check before storing
+a run or launching workers.

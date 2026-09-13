@@ -21,6 +21,13 @@ reconnect.
 
 ### Fixed
 
+- Selecting a saved agent profile that is malformed, unreadable or duplicated
+  now fails before any child request, including when its name matches a
+  built-in role; the parent's default route is never substituted silently.
+  `agent(action: "roster")` lists affected profile identities and paths, Fleet
+  run creation performs the same check, and `docs/SUBAGENTS.md` documents the
+  valid personal profile format with `[permissions]` (#6117, thanks
+  @Gabriel-Degret).
 - Interactive startup no longer mistakes worker scheduling delays for an
   unresponsive terminal. Terminal ownership checks and shutdown cleanup remain
   enforced (#5929).
@@ -474,6 +481,16 @@ reconnect.
 
 ### Added
 
+- Serply is available as an opt-in `[search]` provider for the Web tool
+  (`provider = "serply"`, key from `[search] api_key` or `SERPLY_API_KEY`).
+  Preflight fails closed without a key; Firecrawl remains the default and
+  existing configurations are unchanged (#6100, thanks @googio).
+- Linux terminals: finishing a transcript or composer mouse selection copies
+  the text to the PRIMARY selection without touching the regular clipboard, and
+  middle-click inside the composer pastes PRIMARY at the pointer without
+  submitting. Native X11 and Wayland data control are used through one bounded
+  background worker; SSH sessions without a forwarded display keep their
+  terminal's own selection behavior (#6116, thanks @dmt4).
 - `codewhale sessions export <id-or-unique-prefix>` saves a `.tar.xz` archive
   with the durable record, portable session container, manifest and artifacts.
   Prefix exports preserve unfinished tool calls; confined reads reject linked
@@ -577,6 +594,9 @@ reconnect.
 
 ### Contributors
 
+- **[@googio](https://github.com/googio)** — added the Serply web-search provider ([#6100](https://github.com/Hmbown/Codewhale/pull/6100)).
+- **[@dmt4](https://github.com/dmt4)** — requested Linux copy-on-select and middle-click paste ([#6116](https://github.com/Hmbown/Codewhale/issues/6116)).
+- **[@Gabriel-Degret](https://github.com/Gabriel-Degret)** — reported that saved agent profiles were silently ignored when spawning sub-agents ([#6117](https://github.com/Hmbown/Codewhale/issues/6117)).
 - @nightt5879 — Gemini signature recovery guidance and transport regressions (#6081).
 - @c020627 — Chinese documentation link repairs (#6080).
 - @h3c-hexin and @asto18089 — GLM-5.3 reasoning controls and tool-gating/documentation fixes (#6051, #6052).
