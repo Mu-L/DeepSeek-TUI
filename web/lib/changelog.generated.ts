@@ -37,6 +37,7 @@ export const CHANGELOG: ChangelogRelease[] = [
       {
         "heading": "Fixed",
         "items": [
+          "Computer Use 0.2.2: mouse actions no longer steal focus or reclaim the foreground when the user switches apps mid-action; background typing, scrolling and selection use semantic input, and screenshots stay scoped to the targeted app. The bundled plugin and the first-party marketplace pin carry the same 0.2.2 sources.",
           "Selecting a saved agent profile that is malformed, unreadable or duplicated now fails before any child request, including when its name matches a built-in role; the parent's default route is never substituted silently. agent(action: \"roster\") lists affected profile identities and paths, Fleet run creation performs the same check, and docs/SUBAGENTS.md documents the valid personal profile format with [permissions] (#6117, thanks @Gabriel-Degret).",
           "Interactive startup no longer mistakes worker scheduling delays for an unresponsive terminal. Terminal ownership checks and shutdown cleanup remain enforced (#5929).",
           "Interrupted conversations whose saved runtime store is missing recover into a fresh scope without restoring old tasks or approvals. Stale session saves cannot resurrect the broken binding (#6102).",
@@ -47,10 +48,9 @@ export const CHANGELOG: ChangelogRelease[] = [
           "Plugin trust and automation deletion have keyboard and mouse confirmation controls bound to the exact reviewed content; users can still copy the command and changed content requires a fresh review (#6039).",
           "The model-facing MCP start tool can reconnect an existing configured name after login without changing its credential key or restarting healthy siblings (#6030). A decreasing token-expiry countdown no longer makes a revoked credential look like a new login from another session.",
           "Gemini setup uses the official endpoint's supported reasoning-effort field, avoiding the rejected top-level Google thinking object. Gemini 2.5 and 3 keep their supported effort ranges; signed tool history still survives reasoning changes and restart (#6018, thanks @vmakarov-uk).",
-          "Missed automation occurrences coalesce without overlapping a running job; restart reconciles durable receipts without replaying accepted work. Damaged neighboring records are isolated while preserving their original bytes.",
-          "The bundled first-party marketplace lists the actual plugin bundles and uses the existing install, review, trust and update paths. A read-only connection check verifies catalog and skill mirrors on changes and weekly. Already present bundles lead to their local review and management controls; catalog installs refuse name collisions before downloading, without overwriting or granting trust."
+          "Missed automation occurrences coalesce without overlapping a running job; restart reconciles durable receipts without replaying accepted work. Damaged neighboring records are isolated while preserving their original bytes."
         ],
-        "itemCount": 78
+        "itemCount": 79
       },
       {
         "heading": "Changed",

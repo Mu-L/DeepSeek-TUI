@@ -12,8 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Codewhale v0.9.13 addresses integrity issues in 0.9.12:
 multiline paste is one paste again, truncated tool arguments can no longer execute, strict
 ACP clients connect again, concurrent instances stop destroying each
-other's queued text, and the Computer Use bundle includes plugin 0.2.1
-with an accessibility-first pointer. DeepSeek V4.1 Flash
+other's queued text, and the Computer Use bundle includes plugin 0.2.2
+with an accessibility-first pointer that no longer steals focus. DeepSeek V4.1 Flash
 (`deepseek-flash`) is the default DeepSeek model, reasoning-capable routes
 keep reasoning out of the answer even when a model id carries no version
 number, and `/mcp reload` no longer freezes the interface while servers
@@ -21,6 +21,11 @@ reconnect.
 
 ### Fixed
 
+- Computer Use 0.2.2: mouse actions no longer steal focus or reclaim the
+  foreground when the user switches apps mid-action; background typing,
+  scrolling and selection use semantic input, and screenshots stay scoped to
+  the targeted app. The bundled plugin and the first-party marketplace pin
+  carry the same 0.2.2 sources.
 - Selecting a saved agent profile that is malformed, unreadable or duplicated
   now fails before any child request, including when its name matches a
   built-in role; the parent's default route is never substituted silently.
