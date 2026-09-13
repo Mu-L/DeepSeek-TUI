@@ -65,6 +65,42 @@ The legacy in-process `codewhale app-server` also requires an explicit
 `--auth-token` or `CODEWHALE_APP_SERVER_TOKEN` before binding a non-loopback
 host; its generated one-time `cwapp_*` token is loopback-only.
 
+### Workspace file suggestions
+
+`GET /v1/workspace/files/search?query=runtime&limit=20` returns
+`{"paths":["src/runtime.rs"]}` through the existing authenticated `/v1/*`
+router. It searches only the server's configured workspace, not a thread's
+workspace or the process's current directory. No workspace/path override is
+accepted. The response contains workspace-relative file paths with `/`
+separators, never file contents, absolute paths, or directories.
+
+- `query` is a literal partial filename/path, without an `@` prefix, at most
+  256 UTF-8 bytes. Missing, empty, or whitespace-only queries return an empty
+  list without walking the filesystem. No match also returns an empty list.
+- `limit` defaults to 20; accepted values are 1–100. Invalid limits, oversized
+  queries, and unknown query parameters return HTTP 400.
+- Matching reuses TUI fuzzy `@file` discovery/ranking: case-insensitive path
+  prefix matches first, then substring matches, alphabetically within each
+  group. This is not glob, subsequence, content, or semantic search, and does
+  not apply the TUI's personal frecency boosts.
+- Discovery shares the composer's ignore policy, including `.ignore` and
+  `.deepseekignore`, always-discoverable AI directories, and the bounded
+  hidden/gitignored local-reference fallback. The special `.agents`, `.claude`,
+  `.cursor`, and `.deepseek` walks intentionally bypass ignore rules, as in
+  the TUI. Ignore files are not confidentiality boundaries.
+- Directory symlinks are not traversed. Files are canonicalized and filtered
+  for containment in the workspace before applying the result limit; external
+  and broken file symlinks are omitted. In-workspace file symlinks may appear
+  by their relative names. Suggestions are a filesystem snapshot, not
+  authorization to read a file later; consumers must revalidate when opening it.
+
+Discovery runs off the async executor, with the shared default depth of 10,
+at most 20,000 candidates, and a cooperative two-second discovery budget.
+Results are best-effort, not an exhaustive listing; a slow filesystem operation
+can finish after that budget. Each request scans anew; there is no new index or
+cache. This read-only endpoint does not alter sessions or the pinned model
+prompt/tool prefix.
+
 ### Runtime and account identity
 
 `GET /v1/runtime/info` reports `codewhale_version` plus the full 40-character
@@ -934,6 +970,7 @@ human gate. Auto-merge is `scripts/check-auto-merge.py --repo … --pr …
 
 **Introspection**
 - `GET /v1/workspace/status`
+- `GET /v1/workspace/files/search?query=<partial>&limit=<1-100>` (see workspace file suggestions above)
 - `GET /v1/skills`
 - `GET /v1/apps/mcp/servers`
 - `GET /v1/apps/mcp/tools?server=<optional>`

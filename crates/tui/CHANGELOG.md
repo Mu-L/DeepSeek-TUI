@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Authenticated Runtime API workspace file suggestions reuse TUI `@file`
+  matching and discovery, with bounded queries/results and workspace-contained
+  relative paths only (`GET /v1/workspace/files/search`, #6095). Shared discovery
+  now honors disabled symlink following for AI-tool directory scan roots too.
+
 ## [0.9.13] - 2026-09-12
 
 Codewhale v0.9.13 addresses integrity issues in 0.9.12:

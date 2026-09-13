@@ -2088,6 +2088,109 @@ async fn thread_summary_includes_workspace_branch_metadata() -> Result<()> {
 }
 
 #[tokio::test]
+async fn workspace_file_search_auth_matching_and_bounds() -> Result<()> {
+    let tmp = tempfile::tempdir()?;
+    let workspace = tmp.path().join("workspace");
+    fs::create_dir_all(workspace.join("src"))?;
+    fs::create_dir_all(workspace.join("match-directory"))?;
+    fs::write(
+        workspace.join("match.rs"),
+        "contents must never be returned",
+    )?;
+    fs::write(workspace.join("src/match.rs"), "private file contents")?;
+    for index in 0..105 {
+        fs::write(workspace.join(format!("bounded-{index:03}.rs")), "")?;
+    }
+    let (addr, _, handle) = spawn_test_server_with_root_token_mobile_workspace(
+        tmp.path().join("runtime"),
+        tmp.path().join("sessions"),
+        Some("file-search-token".to_string()),
+        false,
+        workspace,
+    )
+    .await?
+    .context("file search test requires a loopback listener")?;
+    let client = crate::tls::reqwest_client();
+    let url = format!("http://{addr}/v1/workspace/files/search");
+    let search_url = |pairs: &[(&str, &str)]| {
+        let mut url = reqwest::Url::parse(&url).unwrap();
+        url.query_pairs_mut().extend_pairs(pairs.iter().copied());
+        url
+    };
+    for token in [None, Some("wrong-token")] {
+        let mut request = client.get(search_url(&[("query", "match")]));
+        if let Some(token) = token {
+            request = request.bearer_auth(token);
+        }
+        assert_eq!(request.send().await?.status(), StatusCode::UNAUTHORIZED);
+    }
+    for (query, expected) in [
+        ("MATCH", json!(["match.rs", "src/match.rs"])),
+        ("src/ma", json!(["src/match.rs"])),
+        ("", json!([])),
+        ("   ", json!([])),
+        ("no-such-file", json!([])),
+        ("../", json!([])),
+        ("/etc/passwd", json!([])),
+    ] {
+        let body: Value = client
+            .get(search_url(&[("query", query)]))
+            .bearer_auth("file-search-token")
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+        assert_eq!(body, json!({"paths": expected}), "query={query:?}");
+    }
+    for (limit, expected_count) in [(None, 20), (Some("1"), 1), (Some("100"), 100)] {
+        let mut url = search_url(&[("query", "bounded")]);
+        if let Some(limit) = limit {
+            url.query_pairs_mut().append_pair("limit", limit);
+        }
+        let body: Value = client
+            .get(url)
+            .bearer_auth("file-search-token")
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+        assert_eq!(body["paths"].as_array().unwrap().len(), expected_count);
+    }
+    for (key, value) in [
+        ("limit", "0".to_string()),
+        ("limit", "101".to_string()),
+        ("limit", "-1".to_string()),
+        ("limit", "abc".to_string()),
+        ("query", "é".repeat(129)),
+        ("workspace", tmp.path().display().to_string()),
+    ] {
+        assert_eq!(
+            client
+                .get(search_url(&[(key, &value)]))
+                .bearer_auth("file-search-token")
+                .send()
+                .await?
+                .status(),
+            StatusCode::BAD_REQUEST,
+            "invalid {key}"
+        );
+    }
+    let missing_query: Value = client
+        .get(&url)
+        .bearer_auth("file-search-token")
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    assert_eq!(missing_query, json!({"paths": []}));
+    handle.abort();
+    Ok(())
+}
+
+#[tokio::test]
 async fn workspace_and_automation_endpoints_work() -> Result<()> {
     let Some((addr, _runtime_threads, handle)) = spawn_test_server().await? else {
         return Ok(());

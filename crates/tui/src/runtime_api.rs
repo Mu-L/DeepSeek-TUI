@@ -112,7 +112,7 @@ use self::sessions::{
 use self::sessions::{messages_from_thread_detail, session_to_detail};
 #[cfg(test)]
 use self::workspace::collect_workspace_status;
-use self::workspace::{collect_workspace_git_metadata, workspace_status};
+use self::workspace::{collect_workspace_git_metadata, workspace_file_search, workspace_status};
 
 const RUNTIME_TOKEN_ENV: &str = "CODEWHALE_RUNTIME_TOKEN";
 const LEGACY_RUNTIME_TOKEN_ENV: &str = "DEEPSEEK_RUNTIME_TOKEN";
@@ -1088,6 +1088,7 @@ pub fn build_router(state: RuntimeApiState) -> Router {
             post(resume_session_thread),
         )
         .route("/v1/workspace/status", get(workspace_status))
+        .route("/v1/workspace/files/search", get(workspace_file_search))
         .route("/v1/agent-runs", get(list_agent_runs))
         .route("/v1/agent-runs/{run_id}", get(get_agent_run))
         .route("/v1/fleet/profiles", get(list_fleet_profiles))
