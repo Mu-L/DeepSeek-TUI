@@ -33,6 +33,7 @@ export const RELEASE_CONTRIBUTORS: string[] = [
   "@EvanProgramming",
   "@wuisabel-gif",
   "@zhuowp",
+  "@googio",
 ];
 
 /**
@@ -47,4 +48,5 @@ export const RELEASE_HELPERS: string[] = [
   "@mo-vic",
   "@giancarlocp",
   "@hxfhd",
+  "@dmt4",
 ];
