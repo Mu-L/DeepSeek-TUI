@@ -83,6 +83,7 @@ export const CHANGELOG: ChangelogRelease[] = [
       {
         "heading": "Added",
         "items": [
+          "Authenticated Runtime API workspace file suggestions reuse TUI @file matching and discovery, with bounded queries/results and workspace-contained relative paths only (GET /v1/workspace/files/search, #6095, #6120, thanks @wuisabel-gif; reported by @LmeSzinc). Shared discovery now honors disabled symlink following for AI-tool directory scan roots too.",
           "Serply is available as an opt-in [search] provider for the Web tool (provider = \"serply\", key from [search] api_key or SERPLY_API_KEY). Preflight fails closed without a key; Firecrawl remains the default and existing configurations are unchanged (#6100, thanks @googio).",
           "Linux terminals: finishing a transcript or composer mouse selection copies the text to the PRIMARY selection without touching the regular clipboard, and middle-click inside the composer pastes PRIMARY at the pointer without submitting. Native X11 and Wayland data control are used through one bounded background worker; SSH sessions without a forwarded display keep their terminal's own selection behavior (#6116, thanks @dmt4).",
           "codewhale sessions export <id-or-unique-prefix> saves a .tar.xz archive with the durable record, portable session container, manifest and artifacts. Prefix exports preserve unfinished tool calls; confined reads reject linked artifact roots, and existing outputs require --force. Archives retain unredacted content; /load opens the extracted record without installing extracted artifacts (#6056, thanks @h3c-hexin and @asto18089).",
@@ -93,14 +94,14 @@ export const CHANGELOG: ChangelogRelease[] = [
           "Saved sessions preserve exact provider routes. Auxiliary model calls settle their usage once against the route and price snapshot that executed them, including recovery, rather than resolving a new price at completion (#5726, #5848).",
           "[tui].posture_bar and [tui].metrics_line accept full, compact, or hidden, also available through /config. Compact preserves the existing rows' essential fields; hidden returns their space to the transcript (#5973).",
           "Optional model-bound tool-output redaction opt-out, with two explicit startup confirmations and a receipt bound to the readable config contents and modification time. Unconfirmed requests keep masking enabled; routing and stored goal summaries remain redacted (#5982, thanks @SparkofSpike).",
-          "The rusty-alloc cargo feature on codewhale-tui and codewhale-cli opts the binaries into the rusty_alloc global allocator (the mimalloc v2.4.5 architecture remade in pure Rust — no C compiler or build script on that path) instead of the default mimalloc. It is off by default and the default build is unchanged; build with cargo build -p codewhale-tui --features rusty-alloc (#5872).",
-          "The /theme picker now discovers valid user-authored custom:<name> overlays, previews their colors, highlights the active overlay, and preserves it when the picker is opened and committed without navigation (#5901)."
+          "The rusty-alloc cargo feature on codewhale-tui and codewhale-cli opts the binaries into the rusty_alloc global allocator (the mimalloc v2.4.5 architecture remade in pure Rust — no C compiler or build script on that path) instead of the default mimalloc. It is off by default and the default build is unchanged; build with cargo build -p codewhale-tui --features rusty-alloc (#5872)."
         ],
-        "itemCount": 20
+        "itemCount": 21
       },
       {
         "heading": "Contributors",
         "items": [
+          "@LmeSzinc — requested Runtime API access to the TUI's fuzzy file search (#6095).",
           "@googio — added the Serply web-search provider (#6100).",
           "@dmt4 — requested Linux copy-on-select and middle-click paste (#6116).",
           "@Gabriel-Degret — reported that saved agent profiles were silently ignored when spawning sub-agents (#6117).",
@@ -111,10 +112,9 @@ export const CHANGELOG: ChangelogRelease[] = [
           "@gaord — contributed Fleet schema inspection, role precedence and worker deliverable receipts, and linked the community VS Code frontend (#5944, #5945, #5946, #5992).",
           "@goransh-walia — contributed the propose-only commit-planning rework (#5870).",
           "@7jrxt42BxFZo4iAnN4CX — documented turn budgets and goal configuration, and reported gaps in command discovery, Fleet navigation, human waits, state hooks, history and provider routing (#5996, #5952, #5954, #6003, #6004, #6006, #6007).",
-          "@SparkofSpike — contributed two-stage consent for opting out of model-bound credential redaction (#5982).",
-          "@aboimpinto — moved session lifecycle and session-control commands onto shared command contracts (#5902, #5951)."
+          "@SparkofSpike — contributed two-stage consent for opting out of model-bound credential redaction (#5982)."
         ],
-        "itemCount": 22
+        "itemCount": 23
       },
       {
         "heading": "Notes",

@@ -7,13 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Authenticated Runtime API workspace file suggestions reuse TUI `@file`
-  matching and discovery, with bounded queries/results and workspace-contained
-  relative paths only (`GET /v1/workspace/files/search`, #6095). Shared discovery
-  now honors disabled symlink following for AI-tool directory scan roots too.
-
 ## [0.9.13] - 2026-09-12
 
 Codewhale v0.9.13 addresses integrity issues in 0.9.12:
@@ -493,6 +486,10 @@ reconnect.
 
 ### Added
 
+- Authenticated Runtime API workspace file suggestions reuse TUI `@file`
+  matching and discovery, with bounded queries/results and workspace-contained
+  relative paths only (`GET /v1/workspace/files/search`, #6095, #6120, thanks @wuisabel-gif; reported by @LmeSzinc). Shared discovery
+  now honors disabled symlink following for AI-tool directory scan roots too.
 - Serply is available as an opt-in `[search]` provider for the Web tool
   (`provider = "serply"`, key from `[search] api_key` or `SERPLY_API_KEY`).
   Preflight fails closed without a key; Firecrawl remains the default and
@@ -606,6 +603,7 @@ reconnect.
 
 ### Contributors
 
+- **[@LmeSzinc](https://github.com/LmeSzinc)** — requested Runtime API access to the TUI's fuzzy file search ([#6095](https://github.com/Hmbown/Codewhale/issues/6095)).
 - **[@googio](https://github.com/googio)** — added the Serply web-search provider ([#6100](https://github.com/Hmbown/Codewhale/pull/6100)).
 - **[@dmt4](https://github.com/dmt4)** — requested Linux copy-on-select and middle-click paste ([#6116](https://github.com/Hmbown/Codewhale/issues/6116)).
 - **[@Gabriel-Degret](https://github.com/Gabriel-Degret)** — reported that saved agent profiles were silently ignored when spawning sub-agents ([#6117](https://github.com/Hmbown/Codewhale/issues/6117)).
@@ -619,7 +617,7 @@ reconnect.
 - **[@SparkofSpike](https://github.com/SparkofSpike)** — contributed two-stage consent for opting out of model-bound credential redaction ([#5982](https://github.com/Hmbown/Codewhale/pull/5982)).
 - **[@aboimpinto](https://github.com/aboimpinto)** — moved session lifecycle and session-control commands onto shared command contracts ([#5902](https://github.com/Hmbown/Codewhale/pull/5902), [#5951](https://github.com/Hmbown/Codewhale/pull/5951)).
 - **[@EvanProgramming](https://github.com/EvanProgramming)** — reported Windows input and CRLF-write defects, and contributed CRLF preservation and an injectable Windows input runner ([#5908](https://github.com/Hmbown/Codewhale/issues/5908), [#5909](https://github.com/Hmbown/Codewhale/issues/5909), [#5910](https://github.com/Hmbown/Codewhale/pull/5910), [#5911](https://github.com/Hmbown/Codewhale/pull/5911), [#5912](https://github.com/Hmbown/Codewhale/pull/5912)).
-- **[@wuisabel-gif](https://github.com/wuisabel-gif)** — added custom-theme discovery, preview and selection in the theme picker ([#5907](https://github.com/Hmbown/Codewhale/pull/5907)).
+- **[@wuisabel-gif](https://github.com/wuisabel-gif)** — exposed workspace file suggestions through the Runtime API ([#6120](https://github.com/Hmbown/Codewhale/pull/6120)) and added custom-theme discovery, preview and selection in the theme picker ([#5907](https://github.com/Hmbown/Codewhale/pull/5907)).
 - **[@zhuowp](https://github.com/zhuowp)** — matched model-visible shell guidance to the interpreter selected for execution ([#5900](https://github.com/Hmbown/Codewhale/pull/5900)).
 - **[@nsfoxer](https://github.com/nsfoxer)** — reported the multiline-paste regression and incomplete provider model lists ([#5981](https://github.com/Hmbown/Codewhale/issues/5981), [#6009](https://github.com/Hmbown/Codewhale/issues/6009)).
 - **[@Nefelibata1024](https://github.com/Nefelibata1024)** — confirmed the multiline-paste regression's impact ([#5981](https://github.com/Hmbown/Codewhale/issues/5981)).

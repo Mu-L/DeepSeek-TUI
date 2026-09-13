@@ -49,4 +49,5 @@ export const RELEASE_HELPERS: string[] = [
   "@giancarlocp",
   "@hxfhd",
   "@dmt4",
+  "@LmeSzinc",
 ];

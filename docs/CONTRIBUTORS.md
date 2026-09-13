@@ -43,7 +43,7 @@ notes, and relevant issue/PR comments.
 - **[SparkofSpike](https://github.com/SparkofSpike)** — contributed two-stage consent for opting out of model-bound credential redaction and session titles derived from real user prompts instead of runtime handoffs ([#5982](https://github.com/Hmbown/Codewhale/pull/5982), [#6012](https://github.com/Hmbown/Codewhale/pull/6012)).
 - **[aboimpinto](https://github.com/aboimpinto)** — moved session lifecycle and session-control commands onto shared command contracts ([#5902](https://github.com/Hmbown/Codewhale/pull/5902), [#5951](https://github.com/Hmbown/Codewhale/pull/5951)).
 - **[EvanProgramming](https://github.com/EvanProgramming)** — reported Windows input and CRLF-write defects, and contributed CRLF preservation and an injectable Windows input runner ([#5908](https://github.com/Hmbown/Codewhale/issues/5908), [#5909](https://github.com/Hmbown/Codewhale/issues/5909), [#5910](https://github.com/Hmbown/Codewhale/pull/5910), [#5911](https://github.com/Hmbown/Codewhale/pull/5911), [#5912](https://github.com/Hmbown/Codewhale/pull/5912)).
-- **[wuisabel-gif](https://github.com/wuisabel-gif)** — added custom-theme discovery, preview and selection in the theme picker ([#5907](https://github.com/Hmbown/Codewhale/pull/5907)).
+- **[wuisabel-gif](https://github.com/wuisabel-gif)** — exposed workspace file suggestions through the Runtime API ([#6120](https://github.com/Hmbown/Codewhale/pull/6120)) and added custom-theme discovery, preview and selection in the theme picker ([#5907](https://github.com/Hmbown/Codewhale/pull/5907)).
 - **[zhuowp](https://github.com/zhuowp)** — matched model-visible shell guidance to the interpreter selected for execution ([#5900](https://github.com/Hmbown/Codewhale/pull/5900)).
 - **[googio](https://github.com/googio)** — added the opt-in Serply web-search provider ([#6100](https://github.com/Hmbown/Codewhale/pull/6100)).
 
@@ -54,6 +54,7 @@ notes, and relevant issue/PR comments.
 - **[nsfoxer](https://github.com/nsfoxer)** — reported the multiline-paste regression and incomplete provider model lists ([#5981](https://github.com/Hmbown/Codewhale/issues/5981), [#6009](https://github.com/Hmbown/Codewhale/issues/6009)).
 - **[Nefelibata1024](https://github.com/Nefelibata1024)** — confirmed the multiline-paste regression's impact ([#5981](https://github.com/Hmbown/Codewhale/issues/5981)).
 - **[Gabriel-Degret](https://github.com/Gabriel-Degret)** — reported the loss of the allow_insecure_http provider setting and that saved agent profiles were silently ignored when spawning sub-agents ([#5991](https://github.com/Hmbown/Codewhale/issues/5991), [#6117](https://github.com/Hmbown/Codewhale/issues/6117)).
+- **[LmeSzinc](https://github.com/LmeSzinc)** — requested Runtime API access to the TUI fuzzy file search ([#6095](https://github.com/Hmbown/Codewhale/issues/6095)).
 - **[dmt4](https://github.com/dmt4)** — requested Linux copy-on-select and middle-click paste ([#6116](https://github.com/Hmbown/Codewhale/issues/6116)).
 - **[Lujc0523](https://github.com/Lujc0523)** — reported the ACP initialize schema violation affecting strict IDE clients ([#5969](https://github.com/Hmbown/Codewhale/issues/5969)).
 - **[mo-vic](https://github.com/mo-vic)** — proposed storing evicted context on disk so it can be retrieved later ([#6008](https://github.com/Hmbown/Codewhale/issues/6008)).
